@@ -15,6 +15,8 @@ arr = utils.load_exported_db_from_npy(
     WORKDIR, EXEC_MODE, DATABASE_NAME, STEP, IDX_MEMORY
 )
 arr = arr[IDX_DEVICE]
+if len(arr.shape) == 3:
+    arr = arr[:,:,0]
 tableHTML = utils.ndarray2htmlTable(arr)
 name = "<p>" + TABLE_NAME + "</p>\n"
 print(name + tableHTML)
