@@ -1,7 +1,8 @@
 import pandas as pd
+import sentencepiece as spm
 import numpy as np
 import jax.numpy as jnp
-from jax._src.typing import Array
+Array = jnp.ndarray
 
 def ndarray2htmlTable(arr: np.ndarray) -> int:
     assert len(arr.shape) == 2
@@ -24,6 +25,27 @@ def load_exported_db_from_npy(workdir: str, exec_mode: str, database_name: str, 
     """
     path_file = workdir + "/" + exec_mode + "_dbname_" + database_name + "_step_" +str(step) + "_memory_index_" + str(idx_memory) + ".npy"
     return jnp.load(path_file)
+
+def decode_tokens(path_sentencePiece_model_file: str, tokens: Array, unit_convert: str = "token") -> list:
+    assert len(tokens.shape) == 2
+    batch_size, num_tokens = tokens.shape
+    assert unit_convert == "token" or "batch"
+
+    # load sp model
+    sp = spm.SentencePieceProcessor(model_file=path_sentencePiece_model_file)
+
+    # Token reshape and conversion to python list
+    if unit_convert == "token":
+        tokens = jnp.reshape(tokens, (batch_size, num_tokens, 1))
+        tokens = tokens.tolist()
+        ret = []
+        for i in range(len(tokens)):
+            ret.append(sp.decode(tokens[i]))
+        return ret
+    elif unit_convert == "batch":
+        tokens = tokens.tolist()
+        ret = sp.decode(tokens)
+        return ret
 
 if __name__ == "__main__":
     #例としてNumPyの2次元配列を作成
