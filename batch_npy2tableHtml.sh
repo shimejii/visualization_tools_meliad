@@ -1,11 +1,12 @@
 #!/bin/zsh
 
-# source other file
-source config_1.sh
+# source other config 
+# source config_1.sh
+source "$1"
 # source ??/my_env/bin/activate
 # WORKDIR=
 # EXEC_MODES=("train")
-# DATABASE_NAMES=("retrieved_counter")
+# DATABASE_NAMES=("db_name")
 # START_STEP=0
 # END_STEP=10  # 任意の終了ステップを指定
 # START_IDX_MEMORY=1
@@ -23,7 +24,7 @@ do
         for idx_device in ${IDC_DEVICE[@]}
         do
           table_name="mode-${exec_mode}_dbname-${database_name}_step-${step}_memoryIndex-${idx_memory}_deviceIdx-${idx_device}"
-          python main.py "$WORKDIR" "$exec_mode" "$database_name" "$step" "$idx_memory" "$idx_device" "$table_name" > ${WORKDIR}/${table_name}.html
+          python main.py npy2tablehtml "$WORKDIR" "$exec_mode" "$database_name" "$step" "$idx_memory" "$idx_device" "$table_name" > ${WORKDIR}/${table_name}.html
         done
       done
     done
